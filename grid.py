@@ -15,9 +15,19 @@ class Grid:
         # Initial probability of box being white
         self.p = p
 
-        # Contains grid shape
+        # generate random grid shape
         # true if box is white, false if box is black
         self.grid = np.random.choice(a=[True, False], size=(self.size, self.size), p=[p, 1-p])
+        self.__enforce_symmetry__()
+
+    def __enforce_symmetry__(self):
+        # enforce rotational symmetry
+        for i in range(self.size):
+            rotated_i = self.size - 1 - i
+            for j in range(self.size):
+                rotated_j = self.size - 1 - j
+                self.grid[rotated_i, rotated_j] = self.grid[i][j]
+                
 
     def __str__(self):
         visual = ""
