@@ -7,6 +7,7 @@ class Grid:
 
     MIN_WORD_LENGTH = 3
 
+
     def __init__(self, size, p=0.84):
         # How large to make the grid
         self.size = size
@@ -18,9 +19,22 @@ class Grid:
         # generate random grid shape
         # true if box is white, false if box is black
         self.grid = np.random.choice(a=[True, False], size=(self.size, self.size), p=[p, 1-p])
-        self.__enforce_symmetry__()
+        self.enforce_symmetry()
 
-    def __enforce_symmetry__(self):
+
+    def __str__(self):
+            visual = ""
+            for row in self.grid:
+                for box in row:
+                    if box:
+                        visual += "| "
+                    else:
+                        visual += "|X"
+                visual += "|\n"
+            return visual
+
+
+    def enforce_symmetry(self):
         # enforce rotational symmetry
         for i in range(self.size):
             rotated_i = self.size - 1 - i
@@ -29,27 +43,24 @@ class Grid:
                 self.grid[rotated_i, rotated_j] = self.grid[i][j]
                 
 
-    def __str__(self):
-        visual = ""
-        for row in self.grid:
-            for box in row:
-                if box:
-                    visual += "| "
-                else:
-                    visual += "|X"
-            visual += "|\n"
-        return visual
+    
     # calculate grid stats
+    def calc_stats(self):
+        # counting number of words
+        word_count = 0
+        for i in range(self.size):
+            for j in range(self.size):
+                if (not self.grid[i-1][j]) or (i == 0 and self.grid[i][j]):
+                    word_count += 1
+                if (not self.grid[i][j-1]) or (j == 0 and self.grid[i][j]):
+                    word_count += 1
+        print(word_count)
+        # finding shortest word:
+        # slice grid vertically and horizontally
+        # find shortest substring of true values
 
-    # counting number of words in a crossword grid:
-    #   if a box above or left of a given box is black (false), current box
-    #   is the first letter of a new word
-
-    # finding shortest word:
-    # slice grid vertically and horizontally
-    # find shortest substring of true values
-
-test_grid = Grid(15)
+test_grid = Grid(5)
 print(test_grid)
+test_grid.calc_stats()
 
 
