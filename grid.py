@@ -1,27 +1,34 @@
 # Contains encoding for crossword grid
 import pandas as pd
 import numpy as np
+import math
 
 class Grid:
-    def __init__(self, size):
+
+    MIN_WORD_LENGTH = 3
+
+    def __init__(self, size, p=0.84):
         # How large to make the grid
         self.size = size
-
+        # calculation taken from NYTXW max word guidelines
+        self.max_words = math.ceil(4 + 0.312*size**2)
         # Initial probability of box being white
-        P = 0.84
-
-        #Grid Rules
-        MAX_WORDS = 30
-        MIN_WORD_LENGTH = 3
+        self.p = p
 
         # Contains grid shape
         # true if box is white, false if box is black
-        self.grid = np.random.choice(a=[True, False], size=(self.size, self.size), p=[P, 1-P])
+        self.grid = np.random.choice(a=[True, False], size=(self.size, self.size), p=[p, 1-p])
 
     def __str__(self):
-        for box in self.grid:
-            print("O") if box else print("X")
-    
+        visual = ""
+        for row in self.grid:
+            for box in row:
+                if box:
+                    visual += "| "
+                else:
+                    visual += "|X"
+            visual += "|\n"
+        return visual
     # calculate grid stats
 
     # counting number of words in a crossword grid:
@@ -32,6 +39,7 @@ class Grid:
     # slice grid vertically and horizontally
     # find shortest substring of true values
 
-
+test_grid = Grid(15)
+print(test_grid)
 
 
