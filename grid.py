@@ -5,7 +5,7 @@ import math
 
 class Grid:
 
-    MIN_WORD_LENGTH = 2
+    MIN_WORD_LENGTH = 3
 
 
     def __init__(self, size, p=0.84):
@@ -64,10 +64,14 @@ class Grid:
         for row in self.grid:
             if not valid:
                 break
-            curr_word_length = 0
+            curr_word_length = None
             for box in row:
-                if box:
+                if box and curr_word_length is None:
+                    curr_word_length = 1
+                elif box:
                     curr_word_length += 1
+                elif not box and curr_word_length is None:
+                    pass
                 else:
                     if curr_word_length < self.MIN_WORD_LENGTH:
                         # grid invalid
@@ -77,10 +81,14 @@ class Grid:
             col = self.grid[0:, j]
             if not valid:
                     break
-            curr_word_length = 0
+            curr_word_length = None
             for box in col:
-                if box:
+                if box and curr_word_length is None:
+                    curr_word_length = 1
+                elif box:
                     curr_word_length += 1
+                elif not box and curr_word_length is None:
+                    pass
                 else:
                     if curr_word_length < self.MIN_WORD_LENGTH:
                         # grid invalid
@@ -89,7 +97,7 @@ class Grid:
         if not valid:
             self.generate_grid()
 
-test_grid = Grid(6)
+test_grid = Grid(15)
 print(test_grid)
 
 
