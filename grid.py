@@ -3,10 +3,12 @@ import pandas as pd
 import numpy as np
 import math
 
+
 class Grid:
 
     MIN_WORD_LENGTH = 3
     SIZE = 15
+    CELL_PROB = 0.5
 
     def __init__(self):
         # create empty grid
@@ -37,29 +39,42 @@ class Grid:
         pass
 
     def update_col_depths(self):
-        # for each col
-            # if top white depth += 1
-            # else depth 0
+        top_row = self.grid[0]
+        for cell, col_index in zip(top_row, range(SIZE)):
+            if not cell:
+                depth = 0
+                continue
+            depth += 1
         pass
     
+    # generate a symmetric center row
     def generate_7th_row(self):
-        # must be symmetric
-        # width 0
+        width = 0
+        row = np.zeros(15)
         # for each col 0-6
+        for col_index in range(7):
             # if width 1 or 2 cell must be white
-                # width += 1
-            # else
-                # w/ prob p cell black
-                    # width = 0
-                # w/ prob 1-p cell white
-                    # width += 1
+            if width in (1,2):
+                row[col_index] = 1
+                width += 1
+            else:
+                # prob p cell white else black
+                if random.random() > CELL_PROB:
+                    row[col_index] = 1
+                    width += 1
+                    continue
+                width = 0
+                
         # center, col 7
         # if width = 0,1,2 cell must be white
-        # else
-            # w/ prob p cell black
-            # w/ prob 1-p cell white
+        if width in (0,1,2):
+            row[7] = 1
+        else:
+            # prob p cell white else black
+            if random.random() > CELL_PROB:
+                row[7] = 1
         # mirror cols 0-6 for cols 8-14
-        pass
+        row[14:8:-1] = row[0:6]
 
     def generate_6th_row(self):
         # width 0
