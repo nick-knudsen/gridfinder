@@ -9,6 +9,8 @@ class Grid:
     SIZE = 15
 
     def __init__(self):
+        # create empty grid
+        self.grid = []
         # generate random grid shape
         self.generate_grid()
 
@@ -24,7 +26,14 @@ class Grid:
                 visual += "|\n"
             return visual
 
-    def find_connected_component(self):
+    def is_fully_connected(self):
+        # visited = []
+        # unvisited = [all white cells]
+        # visit first unvisited cell
+        # for cell in visited
+            # visit all adjacent unvisited white cells
+            # remove cell from visited
+        # return len(unvisited) == 0
         pass
 
     def update_col_depths(self):
@@ -33,13 +42,28 @@ class Grid:
             # else depth 0
         pass
     
-    def generate_0th_row(self):
+    def generate_7th_row(self):
         # must be symmetric
+        # width 0
+        # for each col 0-6
+            # if width 1 or 2 cell must be white
+                # width += 1
+            # else
+                # w/ prob p cell black
+                    # width = 0
+                # w/ prob 1-p cell white
+                    # width += 1
+        # center, col 7
+        # if width = 0,1,2 cell must be white
+        # else
+            # w/ prob p cell black
+            # w/ prob 1-p cell white
+        # mirror cols 0-6 for cols 8-14
         pass
 
-    def generate_1st_row(self):
+    def generate_6th_row(self):
         # width 0
-        # for each col 0-8
+        # for each col 0-7
             # if depth 1
                 # if center, cell must be white
                     # width += 1
@@ -63,8 +87,6 @@ class Grid:
                 # else
                     # w/ prob p cell black
                         # width = 0
-            
-
         pass
 
     def generate_basic_row(self):
@@ -72,25 +94,52 @@ class Grid:
         # for each col
             # if depth or width 1 or 2 cell must be white
                 # width += 1
-            # otherwise cell may be black w/ prob p?
-                # width 0
+            # else
+                # cell black w/ prob p
+                    # width 0
+                # cell white w/ prob 1-p
+                    # width += 1
         pass
-    
-    def generate_5th_row(self):
+
+    def generate_top_row(self):
+        # width 0
+        # for each col
+            # if depth 0
+                # cell black
+                    # width 0
+            # else if width 1,2
+                # cell white
+                    # width += 1
+            # else
+                # cell black w/ prob p
+                    # width 0
+                # cell white w/ prob 1-p
+                    # width += 1
+        pass
+
+    def mirror_rows(self):
+        # for row 0-6
+            # row 14-row = row[::-1]
         pass
 
     # generate grids row-wise
     def generate_grid(self):
-        # generate random row 0
+        # generate random row 7
         # update column depths
-        # generate valid row 1
-        # update column depths
-        # for rows 2-4:
+        # generate valid row 6
+        # for rows 5-3:
             # generate valid row
             # update column depths
-        # generate valid row 5
-        # for rows 6,7:
+        # row 2
+        # generate valid row 
+        # find num components
+        # while not is_fully_connected()
             # generate valid row
+        # update column depths
+        # for rows 1,0:
+            # generate valid top row
+            # update column depths
+        # mirror rows 0-6 to rows 14-8
         pass
 
     def enforce_symmetry(self):
