@@ -6,15 +6,9 @@ import math
 class Grid:
 
     MIN_WORD_LENGTH = 3
+    SIZE = 15
 
-
-    def __init__(self, size, p=0.84):
-        # How large to make the grid
-        self.size = size
-        # calculation taken from NYTXW max word guidelines
-        self.max_words = math.ceil(4 + 0.312*size**2)
-        # Initial probability of box being white
-        self.p = p
+    def __init__(self):
         # generate random grid shape
         self.generate_grid()
 
@@ -30,12 +24,74 @@ class Grid:
                 visual += "|\n"
             return visual
 
-    def generate_grid(self):
-        # true if box is white, false if box is black
-        self.grid = np.random.choice(a=[True, False], size=(self.size, self.size), p=[self.p, 1-self.p])
-        self.enforce_symmetry()
-        self.check_validity()
+    def find_connected_component(self):
+        pass
 
+    def update_col_depths(self):
+        # for each col
+            # if top white depth += 1
+            # else depth 0
+        pass
+    
+    def generate_0th_row(self):
+        # must be symmetric
+        pass
+
+    def generate_1st_row(self):
+        # width 0
+        # for each col 0-8
+            # if depth 1
+                # if center, cell must be white
+                    # width += 1
+                    # depth += 2
+                # if width 1 or 2 cell must be white
+                    # width += 1
+                    # depth += 1
+                    # depth_n-col+1 += 1
+                # else
+                    # w/ prob p cell black
+                        # width = 0
+                        # depth = 0
+                    # w/ prob 1-p cell white
+                        # width += 1
+                        # depth += 1
+                        # depth_n-col+1 += 1
+            # if depth 0
+                # if width 1 or 2 cell must be white
+                    # width += 1
+                    # depth += 1
+                # else
+                    # w/ prob p cell black
+                        # width = 0
+            
+
+        pass
+
+    def generate_basic_row(self):
+        # width 0
+        # for each col
+            # if depth or width 1 or 2 cell must be white
+                # width += 1
+            # otherwise cell may be black w/ prob p?
+                # width 0
+        pass
+    
+    def generate_5th_row(self):
+        pass
+
+    # generate grids row-wise
+    def generate_grid(self):
+        # generate random row 0
+        # update column depths
+        # generate valid row 1
+        # update column depths
+        # for rows 2-4:
+            # generate valid row
+            # update column depths
+        # generate valid row 5
+        # for rows 6,7:
+            # generate valid row
+        pass
 
     def enforce_symmetry(self):
         # enforce rotational symmetry
@@ -94,10 +150,9 @@ class Grid:
                         # grid invalid
                         valid = False
                         break
-        if not valid:
-            self.generate_grid()
+        return valid
 
-test_grid = Grid(15)
+test_grid = Grid()
 print(test_grid)
 
 
