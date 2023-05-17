@@ -10,7 +10,7 @@ class Grid:
 
         self.MIN_WORD_LENGTH = 3
         self.SIZE = 15
-        self.CELL_PROB = 0.5
+        self.CELL_PROB = 0.25
 
         # create empty grid
         self.grid = []
@@ -32,8 +32,8 @@ class Grid:
             return visual
 
     def is_fully_connected(self):
-        # visited = []
-        # unvisited = [all white cells]
+        visited_cells = []
+        unvisited_cells = [cell for cell in row for row in self.grid if cell]
         # visit first unvisited cell
         # for cell in visited
             # visit all adjacent unvisited white cells
@@ -130,16 +130,26 @@ class Grid:
         return row
 
     def generate_basic_row(self):
-        # width 0
+        width = 0
+        row = np.zeros(self.SIZE)
         # for each col
-            # if depth or width 1 or 2 cell must be white
-                # width += 1
-            # else
-                # cell black w/ prob p
-                    # width 0
-                # cell white w/ prob 1-p
-                    # width += 1
-        pass
+        for col_index in range(15):
+            if col_index in (13,14) and width == 0:
+                continue
+            if self.depths[col_index] in (1,2):
+                row[col_index] = 1
+                width += 1
+                continue
+            if width in (1,2):
+                row[col_index] = 1
+                width += 1
+                continue
+            if random.random() > self.CELL_PROB:
+                row[col_index] = 1
+                width += 1
+                continue
+            width = 0
+        return row
 
     def generate_top_row(self):
         # width 0
@@ -164,24 +174,29 @@ class Grid:
 
     # generate grids row-wise
     def generate_grid(self):
+        # center row, row 7
         row_7 = self.generate_7th_row()
         self.grid.insert(0, row_7)
         self.update_col_depths()
+        # next row, row 6
         row_6 = self.generate_6th_row()
         self.grid.insert(0, row_6)
-        # generate valid row 6
-        # for rows 5-3:
-            # generate valid row
-            # update column depths
+        # rows 5-3:
+        for row in range(3):
+            row = self.generate_basic_row()
+            self.grid.insert(0, row)
+            self.update_col_depths()
         # row 2
-        # generate valid row 
-        # find num components
-        # while not is_fully_connected()
-            # generate valid row
-        # update column depths
-        # for rows 1,0:
-            # generate valid top row
-            # update column depths
+        row_2 = self.generate_basic_row()
+        self.grid.insert(0, row_2)
+        while not self.is_fully_connected():
+            row_2 = self.generate_basic_row()
+            self.grid[0] = row_2
+        self.update_col_depths()
+        # rows 1,0
+        for row in range(2):
+            self.generate_top_row()
+            self.update_col_depths()
         # mirror rows 0-6 to rows 14-8
         pass
 
