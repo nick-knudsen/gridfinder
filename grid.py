@@ -2,17 +2,20 @@
 import pandas as pd
 import numpy as np
 import math
-
+import random
 
 class Grid:
 
-    MIN_WORD_LENGTH = 3
-    SIZE = 15
-    CELL_PROB = 0.5
-
     def __init__(self):
+
+        self.MIN_WORD_LENGTH = 3
+        self.SIZE = 15
+        self.CELL_PROB = 0.5
+
         # create empty grid
         self.grid = []
+        # keep track of column depths
+        self.depths = np.zeros(self.SIZE)
         # generate random grid shape
         self.generate_grid()
 
@@ -20,8 +23,8 @@ class Grid:
     def __str__(self):
             visual = ""
             for row in self.grid:
-                for box in row:
-                    if box:
+                for cell in row:
+                    if cell:
                         visual += "| "
                     else:
                         visual += "|X"
@@ -40,17 +43,17 @@ class Grid:
 
     def update_col_depths(self):
         top_row = self.grid[0]
-        for cell, col_index in zip(top_row, range(SIZE)):
+        for cell, col_index in zip(top_row, range(self.SIZE)):
             if not cell:
-                depth = 0
+                self.depths[col_index] = 0
                 continue
-            depth += 1
+            self.depths[col_index] += 1
         pass
     
     # generate a symmetric center row
     def generate_7th_row(self):
         width = 0
-        row = np.zeros(15)
+        row = np.zeros(self.SIZE)
         # for each col 0-6
         for col_index in range(7):
             # if width 1 or 2 cell must be white
@@ -59,49 +62,57 @@ class Grid:
                 width += 1
             else:
                 # prob p cell white else black
-                if random.random() > CELL_PROB:
+                if random.random() > self.CELL_PROB:
                     row[col_index] = 1
                     width += 1
                     continue
                 width = 0
                 
         # center, col 7
-        # if width = 0,1,2 cell must be white
-        if width in (0,1,2):
+        # if width = 1,2 cell must be white
+        if width in (1,2):
             row[7] = 1
-        else:
+        if width > 2:
             # prob p cell white else black
-            if random.random() > CELL_PROB:
+            if random.random() > self.CELL_PROB:
                 row[7] = 1
         # mirror cols 0-6 for cols 8-14
-        row[14:8:-1] = row[0:6]
+        row[14:7:-1] = row[0:7]
+        return row
 
     def generate_6th_row(self):
-        # width 0
-        # for each col 0-7
-            # if depth 1
-                # if center, cell must be white
-                    # width += 1
-                    # depth += 2
+        width = 0
+        row = np.zeros(self.SIZE)
+
+        for col_index in range(8):
+            if self.depths[col_index] == 1:
+                if col_index == 7:
+                    # if center cell white, curr cell must be white
+                    row[col_index] = 1
+                    width += 1
+                    self.depths[col_index] += 2
+                    continue
                 # if width 1 or 2 cell must be white
-                    # width += 1
-                    # depth += 1
-                    # depth_n-col+1 += 1
-                # else
-                    # w/ prob p cell black
-                        # width = 0
-                        # depth = 0
-                    # w/ prob 1-p cell white
-                        # width += 1
-                        # depth += 1
-                        # depth_n-col+1 += 1
-            # if depth 0
-                # if width 1 or 2 cell must be white
-                    # width += 1
-                    # depth += 1
-                # else
-                    # w/ prob p cell black
-                        # width = 0
+                if width in (1,2):
+                    row[col_index] = 1
+                    width += 1
+                    self.depths[col_index] += 1
+                    # mirrored cell can 'see through' middle row, increase depth
+                    self.depths[self.SIZE-1-col_index] += 1
+                    continue
+            if random.random() > self.CELL_PROB:
+                row[col_index] = 1
+                self.depths[col_index] += 1
+                continue
+            width = 0
+            self.depths[col_index] = 0
+                    
+        for col_index in range(8,15):
+            if self.depths[col_index] == 1 or width in (1,2):
+                # cell must be white
+                row[col_index] = 1
+                width += 1
+                self.depths[col_index] += 1
         pass
 
     def generate_basic_row(self):
@@ -139,7 +150,9 @@ class Grid:
 
     # generate grids row-wise
     def generate_grid(self):
-        # generate random row 7
+        row_7 = self.generate_7th_row()
+        self.grid.insert(0, row_7)
+        self.update_col_depths()
         # update column depths
         # generate valid row 6
         # for rows 5-3:
