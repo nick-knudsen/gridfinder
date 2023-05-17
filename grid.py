@@ -85,35 +85,49 @@ class Grid:
         row = np.zeros(self.SIZE)
 
         for col_index in range(8):
-            if self.depths[col_index] == 1:
-                if col_index == 7:
-                    # if center cell white, curr cell must be white
-                    row[col_index] = 1
-                    width += 1
-                    self.depths[col_index] += 2
-                    continue
-                # if width 1 or 2 cell must be white
-                if width in (1,2):
-                    row[col_index] = 1
-                    width += 1
-                    self.depths[col_index] += 1
+            if self.depths[col_index] == 1 and col_index == 7:
+                # if center cell white, curr cell must be white
+                row[col_index] = 1
+                width += 1
+                self.depths[col_index] += 2
+                continue
+            # if width 1 or 2 cell must be white
+            if width in (1,2):
+                row[col_index] = 1
+                width += 1
+                self.depths[col_index] += 1
+                if self.depths[col_index] == 2:
                     # mirrored cell can 'see through' middle row, increase depth
                     self.depths[self.SIZE-1-col_index] += 1
-                    continue
+                continue
             if random.random() > self.CELL_PROB:
                 row[col_index] = 1
+                width += 1
                 self.depths[col_index] += 1
                 continue
             width = 0
             self.depths[col_index] = 0
                     
         for col_index in range(8,15):
+            if col_index in (13,14) and width == 0:
+                self.depths[col_index] = 0
+                continue
             if self.depths[col_index] == 1 or width in (1,2):
                 # cell must be white
                 row[col_index] = 1
                 width += 1
                 self.depths[col_index] += 1
-        pass
+                continue
+            if random.random() > self.CELL_PROB:
+                row[col_index] = 1
+                width += 1
+                self.depths[col_index] += 1
+                if self.depths[col_index] == 2:
+                    self.depths[self.SIZE-1-col_index] += 1
+                continue
+            width = 0
+            self.depths[col_index] = 0
+        return row
 
     def generate_basic_row(self):
         # width 0
@@ -153,7 +167,8 @@ class Grid:
         row_7 = self.generate_7th_row()
         self.grid.insert(0, row_7)
         self.update_col_depths()
-        # update column depths
+        row_6 = self.generate_6th_row()
+        self.grid.insert(0, row_6)
         # generate valid row 6
         # for rows 5-3:
             # generate valid row
