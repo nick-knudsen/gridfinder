@@ -31,9 +31,13 @@ class Grid:
                 visual += "|\n"
             return visual
 
+    # TODO: method for conditional prob based cell fill method
+    #       pass in cell indices, will need prob map
+    #       call from anywhere cell is randomly filled
+
     def is_fully_connected(self):
         visited_cells = []
-        cell_status = np.full((self.SIZE,self.SIZE), False)
+        cell_status = np.full((len(self.grid),self.SIZE), False)
 
         # visit first unvisited cell
         break_next = False
@@ -234,6 +238,7 @@ class Grid:
             self.generate_top_row()
             self.update_col_depths()
         # mirror rows 0-6 to rows 14-8
+        self.mirror_rows()
         pass
 
     def enforce_symmetry(self):
