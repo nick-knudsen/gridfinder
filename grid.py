@@ -47,21 +47,26 @@ class Grid:
                     break_next = True
                     break
         
+        # visit all connected cells
         while visited_cells:
             cell = visited_cells[0]
             row = cell[0]
             col = cell[1]
+            # check all adjacent cells
             for adj_row, adj_col in zip((-1,0,0,1), (0,-1,1,0)):
                 new_row = row+adj_row
                 new_col = col+adj_col
+                # check for valid index
                 if new_row < 0 or new_row > len(self.grid)-1 or new_col < 0 or new_col > len(self.grid[0])-1:
                     continue
+                # if cell is white and unvisited, visit it
                 if self.grid[new_row][new_col] and not cell_status[new_row][new_col]:
                     cell_status[new_row][new_col] = True
                     visited_cells.append((new_row, new_col))
             
             visited_cells.pop(0)
 
+        # compare visited cells and white cells, will be the same in a fully connected grid
         for i in range(len(self.grid)):
             for j in range(len(self.grid[i])):
                 if self.grid[i][j] and not cell_status[i][j]:
@@ -81,26 +86,26 @@ class Grid:
     def generate_7th_row(self):
         width = 0
         row = np.zeros(self.SIZE)
-        # for each col 0-6
+        
         for col_index in range(7):
-            # if width 1 or 2 cell must be white
             if width in (1,2):
+                # width 1 or 2 cell must be white
                 row[col_index] = 1
                 width += 1
-            else:
-                # prob p cell white else black
-                if random.random() > self.CELL_PROB:
-                    row[col_index] = 1
-                    width += 1
-                    continue
-                width = 0
+                continue
+            # cell can be black or white
+            if random.random() > self.CELL_PROB:
+                row[col_index] = 1
+                width += 1
+                continue
+            width = 0
                 
         # center, col 7
-        # if width = 1,2 cell must be white
         if width in (1,2):
+            # width 1 or 2, cell must be white
             row[7] = 1
         if width > 2:
-            # prob p cell white else black
+            # cell can be black or white
             if random.random() > self.CELL_PROB:
                 row[7] = 1
         # mirror cols 0-6 for cols 8-14
@@ -113,13 +118,13 @@ class Grid:
 
         for col_index in range(8):
             if self.depths[col_index] == 1 and col_index == 7:
-                # if center cell white, curr cell must be white
+                # center cell white, curr cell must be white
                 row[col_index] = 1
                 width += 1
                 self.depths[col_index] += 2
                 continue
-            # if width 1 or 2 cell must be white
             if width in (1,2):
+                # width 1 or 2, cell must be white
                 row[col_index] = 1
                 width += 1
                 self.depths[col_index] += 1
@@ -127,6 +132,7 @@ class Grid:
                     # mirrored cell can 'see through' middle row, increase depth
                     self.depths[self.SIZE-1-col_index] += 1
                 continue
+            # cell can be black or white
             if random.random() > self.CELL_PROB:
                 row[col_index] = 1
                 width += 1
@@ -137,19 +143,22 @@ class Grid:
                     
         for col_index in range(8,15):
             if col_index in (13,14) and width == 0:
+                # last two cells must be black when previous one is
                 self.depths[col_index] = 0
                 continue
             if self.depths[col_index] == 1 or width in (1,2):
-                # cell must be white
+                # width 1 or 2, cell must be white
                 row[col_index] = 1
                 width += 1
                 self.depths[col_index] += 1
                 continue
+            # cell can be black or white
             if random.random() > self.CELL_PROB:
                 row[col_index] = 1
                 width += 1
                 self.depths[col_index] += 1
                 if self.depths[col_index] == 2:
+                    # mirrored cell can 'see through' middle row, increase depth
                     self.depths[self.SIZE-1-col_index] += 1
                 continue
             width = 0
@@ -159,7 +168,7 @@ class Grid:
     def generate_basic_row(self):
         width = 0
         row = np.zeros(self.SIZE)
-        # for each col
+
         for col_index in range(15):
             if col_index in (13,14) and width == 0:
                 continue
