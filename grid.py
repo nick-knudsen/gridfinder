@@ -33,13 +33,40 @@ class Grid:
 
     def is_fully_connected(self):
         visited_cells = []
-        unvisited_cells = [cell for cell in row for row in self.grid if cell]
+        cell_status = np.full((self.SIZE,self.SIZE), False)
+
         # visit first unvisited cell
-        # for cell in visited
-            # visit all adjacent unvisited white cells
-            # remove cell from visited
-        # return len(unvisited) == 0
-        pass
+        break_next = False
+        for i in range(len(self.grid)):
+            if break_next:
+                break
+            for j in range(len(self.grid[i])):
+                if self.grid[i][j]:
+                    visited_cells.append((i,j))
+                    cell_status[i][j] = True
+                    break_next = True
+                    break
+        
+        while visited_cells:
+            cell = visited_cells[0]
+            row = cell[0]
+            col = cell[1]
+            for adj_row, adj_col in zip((-1,0,0,1), (0,-1,1,0)):
+                new_row = row+adj_row
+                new_col = col+adj_col
+                if new_row < 0 or new_row > len(self.grid)-1 or new_col < 0 or new_col > len(self.grid[0])-1:
+                    continue
+                if self.grid[new_row][new_col] and not cell_status[new_row][new_col]:
+                    cell_status[new_row][new_col] = True
+                    visited_cells.append((new_row, new_col))
+            
+            visited_cells.pop(0)
+
+        for i in range(len(self.grid)):
+            for j in range(len(self.grid[i])):
+                if self.grid[i][j] and not cell_status[i][j]:
+                    return False
+        return True
 
     def update_col_depths(self):
         top_row = self.grid[0]
