@@ -173,7 +173,7 @@ class Grid:
         width = 0
         row = np.zeros(self.SIZE)
 
-        for col_index in range(15):
+        for col_index in range(self.SIZE):
             if col_index in (13,14) and width == 0:
                 continue
             if self.depths[col_index] in (1,2):
@@ -192,25 +192,24 @@ class Grid:
         return row
 
     def generate_top_row(self):
-        # width 0
-        # for each col
-            # if depth 0
-                # cell black
-                    # width 0
-            # else if width 1,2
-                # cell white
-                    # width += 1
-            # else
-                # cell black w/ prob p
-                    # width 0
-                # cell white w/ prob 1-p
-                    # width += 1
-        pass
+        width = 0
+        row = np.zeros(self.SIZE)
+
+        # turn all legal cells white
+        for col_index in range(self.SIZE):
+            if self.depths[col_index] == 0:
+                if width in (1,2):
+                    # too narrow for previous white cells
+                    row[col_index-2] = 0
+                    row[col_index-1] = 0
+                width = 0
+                continue
+            row[col_index] = 1
+            width += 1
 
     def mirror_rows(self):
-        # for row 0-6
-            # row 14-row = row[::-1]
-        pass
+        for row in range(7):
+            self.grid[14-row] = self.grid[row[::-1]]
 
     # generate grids row-wise
     def generate_grid(self):
@@ -235,11 +234,11 @@ class Grid:
         self.update_col_depths()
         # rows 1,0
         for row in range(2):
-            self.generate_top_row()
+            top_row = self.generate_top_row()
+            self.grid.insert(0, top_row)
             self.update_col_depths()
         # mirror rows 0-6 to rows 14-8
         self.mirror_rows()
-        pass
 
     def enforce_symmetry(self):
         # enforce rotational symmetry
