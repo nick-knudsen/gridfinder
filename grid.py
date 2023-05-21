@@ -25,9 +25,9 @@ class Grid:
             for row in self.grid:
                 for cell in row:
                     if cell:
-                        visual += "| "
-                    else:
                         visual += "|X"
+                    else:
+                        visual += "| "
                 visual += "|\n"
             return visual
 
@@ -231,6 +231,7 @@ class Grid:
         # row 2
         row_2 = self.generate_basic_row()
         self.grid.insert(0, row_2)
+        # TODO: check to see if fully white row makes grid fully connected, if not, grid is invalid, start over
         while not self.is_fully_connected():
             row_2 = self.generate_basic_row()
             self.grid[0] = row_2
@@ -257,13 +258,13 @@ class Grid:
         valid = True
         # counting number of words
         self.word_count = 0
-        for i in range(self.size):
-            for j in range(self.size):
+        for i in range(self.SIZE):
+            for j in range(self.SIZE):
                 if (not self.grid[i-1][j]) or (i == 0 and self.grid[i][j]):
                     self.word_count += 1
                 if (not self.grid[i][j-1]) or (j == 0 and self.grid[i][j]):
                     self.word_count += 1
-
+        
         # finding shortest word:
         # slice grid vertically and horizontally
         # find shortest substring of true values
@@ -283,8 +284,8 @@ class Grid:
                         # grid invalid
                         valid = False
                         break
-        for j in range(self.size):
-            col = self.grid[0:, j]
+        for j in range(self.SIZE):
+            col = self.grid[:][j]
             if not valid:
                     break
             curr_word_length = None
@@ -304,5 +305,5 @@ class Grid:
 
 test_grid = Grid()
 print(test_grid)
-
-
+print(test_grid.check_validity())
+print(test_grid.word_count)
