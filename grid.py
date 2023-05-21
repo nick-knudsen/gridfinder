@@ -206,13 +206,14 @@ class Grid:
                 continue
             row[col_index] = 1
             width += 1
+        return row
 
     def mirror_rows(self):
-        bottom_half = np.zeros(7)
+        bottom_half = [[False]*15]*7
         for row in range(7):
-            bottom_half[6-row] = self.grid[row[::-1]]
+            bottom_half[6-row] = self.grid[row][::-1]
         self.grid.extend(bottom_half)
-        
+
     # generate grids row-wise
     def generate_grid(self):
         # center row, row 7
