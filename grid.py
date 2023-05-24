@@ -169,11 +169,22 @@ class Grid:
             self.depths[col_index] = 0
         return row
 
-    def generate_basic_row(self):
+    def generate_basic_row(self, top_row = False):
         width = 0
         row = np.zeros(self.SIZE)
 
         for col_index in range(self.SIZE):
+            if top_row and self.depths[col_index] == 0:
+                if width in (1,2):
+                    # too narrow for previous white cells
+                    row[col_index-2] = 0
+                    row[col_index-1] = 0
+                width = 0
+                continue
+            if col_index in (12,13) and (self.depths[13] in (1,2) or self.depths[14] in (1,2)):
+                row[col_index] = 1
+                width += 1
+                continue
             if col_index in (13,14) and width == 0:
                 continue
             if self.depths[col_index] in (1,2):
@@ -189,23 +200,6 @@ class Grid:
                 width += 1
                 continue
             width = 0
-        return row
-
-    def generate_top_row(self):
-        width = 0
-        row = np.zeros(self.SIZE)
-
-        # turn all legal cells white
-        for col_index in range(self.SIZE):
-            if self.depths[col_index] == 0:
-                if width in (1,2):
-                    # too narrow for previous white cells
-                    row[col_index-2] = 0
-                    row[col_index-1] = 0
-                width = 0
-                continue
-            row[col_index] = 1
-            width += 1
         return row
 
     def mirror_rows(self):
@@ -238,7 +232,7 @@ class Grid:
         self.update_col_depths()
         # rows 1,0
         for row in range(2):
-            top_row = self.generate_top_row()
+            top_row = self.generate_basic_row(top_row=True)
             self.grid.insert(0, top_row)
             self.update_col_depths()
         # mirror rows 0-6 to rows 14-8
