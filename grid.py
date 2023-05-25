@@ -10,7 +10,7 @@ class Grid:
 
         self.MIN_WORD_LENGTH = 3
         self.SIZE = 15
-        self.CELL_PROB = 0.25
+        self.CELL_PROB = 0.35
 
         # create empty grid
         self.grid = []
@@ -192,6 +192,10 @@ class Grid:
                 width += 1
                 continue
             if width in (1,2):
+                row[col_index] = 1
+                width += 1
+                continue
+            if top_row:
                 row[col_index] = 1
                 width += 1
                 continue
