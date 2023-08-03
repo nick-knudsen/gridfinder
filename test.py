@@ -40,8 +40,17 @@ def is_fully_connected(grid):
 
 
 def get_grid_weights():
-    tables = pd.read_html('https://www.xwordinfo.com/HeatMap')
+    tables = pd.read_html('https://www.xwordinfo.com/HeatMap', flavor='html5lib')
+    m_df = tables[1]
+    t_df = tables[2]
+    w_df = tables[3]
+    r_df = tables[4]
+    f_df = tables[5]
+    s_df = tables[6]
 
+    print(m_df.info())
+
+get_grid_weights()
 
 # test_grid = [
 #     [1,0,1,1,1,1,0,1],
