@@ -1,4 +1,6 @@
 import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 
 def is_fully_connected(grid):
         visited_cells = []
@@ -36,12 +38,17 @@ def is_fully_connected(grid):
                     return False
         return True
 
-test_grid = [
-    [1,0,1,1,1,1,0,1],
-    [1,0,0,1,0,1,0,1],
-    [1,1,0,1,0,1,0,1],
-    [0,1,0,1,0,1,0,1],
-    [1,1,1,1,0,1,1,1]
-]
 
-print(is_fully_connected(test_grid))
+def get_grid_weights():
+    tables = pd.read_html('https://www.xwordinfo.com/HeatMap')
+
+
+# test_grid = [
+#     [1,0,1,1,1,1,0,1],
+#     [1,0,0,1,0,1,0,1],
+#     [1,1,0,1,0,1,0,1],
+#     [0,1,0,1,0,1,0,1],
+#     [1,1,1,1,0,1,1,1]
+# ]
+
+#print(is_fully_connected(test_grid))
